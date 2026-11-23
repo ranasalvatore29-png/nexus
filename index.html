@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="NEXUS">
+<meta name="theme-color" content="#0d0d12"><title>NEXUS | فیلم، زنجیرە و گەیم</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#0d0d12;--p:#17171f;--l:#2a2a36;--t:#f2f2f5;--m:#9a9aab;--y:#f5c518;color-scheme:dark}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#f4f4f7;--p:#fff;--l:#dcdce6;--t:#16161d;--m:#5f5f73;--y:#b88a00;color-scheme:light}}
+[data-theme=light]{--bg:#f4f4f7;--p:#fff;--l:#dcdce6;--t:#16161d;--m:#5f5f73;--y:#b88a00;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:'Noto Sans Arabic',system-ui,sans-serif;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);overflow-x:hidden}
+a{color:inherit;text-decoration:none}.w{max-width:1200px;margin:0 auto;padding:0 14px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--l)}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0}
+.logo{background:var(--y);color:#000;font-weight:800;letter-spacing:2px;padding:2px 10px;border-radius:6px;direction:ltr;font-size:20px}
+.btn,.chip{background:var(--p);color:var(--t);border:1px solid var(--l);border-radius:10px;padding:8px 13px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;display:inline-block}
+.chip.on,.btn.y{background:var(--y);color:#000;border-color:var(--y)}
+.search{width:100%;background:var(--p);color:var(--t);border:1px solid var(--l);border-radius:12px;padding:13px 15px;font:inherit;font-size:16px;margin:14px 0 10px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
+.hero2{margin-top:16px;padding:22px;border-radius:16px;background:linear-gradient(135deg,#3a2f06,#15151d)}.hero2 h1{margin:0 0 6px;color:var(--y)}.hero2 p{margin:0;color:#ccc;font-size:14px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:13px}
+.c{background:var(--p);border:1px solid var(--l);border-radius:12px;overflow:hidden;position:relative;display:block}
+.c img,.ph{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:var(--l)}.ph{display:flex;align-items:center;justify-content:center;font-size:34px}
+.i{padding:8px 10px}.i b{font-size:13px;display:block;line-height:1.4;direction:ltr;text-align:left}.i small{color:var(--m);font-size:12px}
+.r,.rr{color:var(--y);font-weight:800}.rr{font-size:26px}.rr small{font-size:12px;color:var(--m);font-weight:400;margin-right:6px}
+.sv{position:absolute;top:8px;left:8px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.7);color:#fff;font-size:16px;cursor:pointer}.sv.on{background:var(--y);color:#000}
+.back{display:inline-block;margin:14px 0}
+.hero{border-radius:16px;overflow:hidden;background:var(--p) center/cover;position:relative}
+.hero .in{display:flex;gap:16px;align-items:flex-end;padding:90px 18px 18px;background:linear-gradient(to top,var(--bg) 4%,rgba(0,0,0,.45));direction:ltr;text-align:left}
+.hero img{width:110px;border-radius:10px;flex-shrink:0}.hero h1{margin:0 0 4px;font-size:clamp(22px,5vw,38px)}.hero .in>div{direction:rtl;min-width:0}
+.mt{color:var(--m);font-size:13px}h2{font-size:18px;margin:24px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0}.stat{background:var(--p);border:1px solid var(--l);border-radius:12px;padding:11px}.stat small{display:block;color:var(--m);font-size:12px}.stat b{font-size:15px}
+.desc{background:var(--p);border:1px solid var(--l);border-radius:14px;padding:16px;line-height:1.9;font-size:14px;direction:ltr;text-align:left}
+.row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}.pp{flex:0 0 100px;text-align:center}.pp img,.pp .ph{width:100px;height:100px;aspect-ratio:1;border-radius:50%;font-size:30px}.pp b{font-size:12px;display:block;margin-top:5px;direction:ltr}.pp small{font-size:11px;color:var(--m);direction:ltr;display:block}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.vid{aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;width:100%}.vid iframe,.vid video{width:100%;height:100%;border:0}
+.ep{display:flex;justify-content:space-between;gap:10px;background:var(--p);border:1px solid var(--l);border-radius:12px;padding:11px 13px;margin-bottom:8px}
+.ep b{font-size:14px;direction:ltr;display:block;text-align:left}.ep p{margin:4px 0 0;font-size:12px;color:var(--m);direction:ltr;text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ep .n{color:var(--y);font-weight:800;margin-left:8px}.ep .rt{text-align:center;flex-shrink:0;font-size:12px;color:var(--m)}
+.md{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px}.md.open{display:flex}
+.mc{background:var(--p);border:1px solid var(--l);border-radius:18px;padding:18px;width:100%;max-width:460px;max-height:88vh;overflow:auto}
+.mc input{width:100%;background:var(--bg);color:var(--t);border:1px solid var(--l);border-radius:10px;padding:10px;font:inherit;margin:4px 0 12px;direction:ltr}
+.mc label{font-size:13px;color:var(--m)}.err{background:var(--p);border:1px dashed var(--l);border-radius:14px;padding:22px;text-align:center;margin-top:14px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--p);border:1px solid var(--y);padding:9px 16px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:80}#toast.on{opacity:1}
+</style></head><body>
+<header><div class="w nav"><a class="logo" href="#">NEXUS</a><div>
+<button class="btn" id="bK">⚙️ کلیلەکان</button> <button class="btn" id="bP">👤 <span id="pn"></span> (<span id="pc"></span>)</button> <button class="btn" id="bT">🌓</button></div></div></header>
+<main class="w" id="app"></main>
+<div class="md" id="mK"><div class="mc"><h3>⚙️ کلیلەکانی API</h3>
+<label>TMDB API Key (v3) — فیلم و زنجیرە</label><input id="kt" placeholder="TMDB key">
+<label>RAWG API Key — گەیم</label><input id="kr" placeholder="RAWG key">
+<button class="btn y" id="kS">پاشەکەوت</button> <button class="btn" data-x="mK">داخستن</button></div></div>
+<div class="md" id="mP"><div class="mc"><h3>👤 پڕۆفایل</h3><div class="chips" id="pl"></div><br>
+<input id="np" placeholder="ناوی پڕۆفایلی نوێ"><button class="btn y" id="pS">دروستکردن / چوونەژوورەوە</button> <button class="btn" data-x="mP">داخستن</button></div></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),LS='nexus_v4',app=$('#app');
+let S=JSON.parse(localStorage.getItem(LS)||'null')||{tmdb:'',rawg:'',prof:'میوان',saved:{'میوان':[]},theme:''};
+const sv=()=>localStorage.setItem(LS,JSON.stringify(S));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const yr=d=>(d||'').slice(0,4),hm=m=>Math.floor(m/60)+' کاتژمێر و '+m%60+' خولەک';
+const ti=(p,s='w342')=>p?'https://image.tmdb.org/t/p/'+s+p:'';
+async function api(base,key,kn,p,q={}){if(!key)throw new Error('key');const u=new URL(base+p);u.searchParams.set(kn,key);for(const k in q)u.searchParams.set(k,q[k]);const r=await fetch(u.toString());if(!r.ok)throw new Error('HTTP '+r.status);return JSON.parse(await r.text())}
+const tm=(p,q={})=>api('https://api.themoviedb.org/3',S.tmdb,'api_key',p,{language:'en-US',...q});
+const rw=(p,q={})=>api('https://api.rawg.io/api',S.rawg,'key',p,q);
+const REG={},mv=o=>({h:'#m'+o.id,img:ti(o.poster_path),t:o.title,s:'🎬 '+yr(o.release_date),r:o.vote_average}),
+tv=o=>({h:'#t'+o.id,img:ti(o.poster_path),t:o.name,s:'📺 '+yr(o.first_air_date),r:o.vote_average}),
+gm=o=>({h:'#g'+o.id,img:o.background_image,t:o.name,s:'🎮 '+yr(o.released),r:o.rating?o.rating*2:0}),
+cr=o=>o.media_type==='tv'?tv(o):mv(o);
+const list=()=>S.saved[S.prof]||(S.saved[S.prof]=[]),isSv=h=>list().some(o=>o.h===h);
+const lbl=h=>isSv(h)?'★ پاشەکەوتکراوە':'☆ پاشەکەوتکردن';
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.k);toast.k=setTimeout(()=>t.classList.remove('on'),2000)}
+function badges(){$('#pn').textContent=S.prof;$('#pc').textContent=list().length}
+function cards(a){return a.length?'<div class="g">'+a.map(o=>{REG[o.h]=o;const s=isSv(o.h);return `<a class="c" href="${o.h}">${o.img?`<img loading="lazy" src="${o.img}" alt="">`:'<div class="ph">🎞️</div>'}<button class="sv ${s?'on':''}" data-sv="${o.h}">${s?'★':'☆'}</button><div class="i"><b>${esc(o.t)}</b><small>${esc(o.s)} · <span class="r">${o.r?'★ '+o.r.toFixed(1):'—'}</span></small></div></a>`}).join('')+'</div>':'<p class="mt">هیچ ئەنجامێک نییە.</p>'}
+const people=a=>a.length?'<div class="row">'+a.map(p=>`<a class="pp" href="#d${p.id}">${p.profile_path?`<img loading="lazy" src="${ti(p.profile_path,'w185')}" alt="">`:'<div class="ph">👤</div>'}<b>${esc(p.name)}</b><small>${esc(p.character||p.job||'')}</small></a>`).join('')+'</div>':'';
+const chips=(a,pre)=>a.length?'<div class="chips">'+a.map(x=>`<a class="chip" href="#${pre}${x.id}">${esc(x.name)}</a>`).join('')+'</div>':'';
+const D=(t,st='')=>`<div class="dw"${st?` style="${st}"`:''}><div class="desc">${esc(t)}</div>${t==='—'?'':'<button class="btn" data-tr style="margin-top:8px">🌐 وەرگێڕان بۆ کوردی</button>'}</div>`;
+async function tr(text){const parts=text.match(/[^.!?]+[.!?]*\s*/g)||[text],ch=[];let c='';for(const p of parts){if((c+p).length>600&&c){ch.push(c);c=''}c+=p}if(c)ch.push(c);
+const out=await Promise.all(ch.map(async q=>{const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ckb&dt=t&q='+encodeURIComponent(q));if(!r.ok)throw new Error('HTTP '+r.status);const j=JSON.parse(await r.text());return j[0].map(x=>x[0]).join('')}));return out.join(' ')}
+const stat=(k,v)=>v?`<div class="stat"><small>${k}</small><b>${esc(v)}</b></div>`:'';
+function hero(bg,img,title,sub,r,vc,h){return `<a class="back" href="#">→ گەڕانەوە</a><div class="hero" style="${bg?`background-image:url(${bg})`:''}"><div class="in">${img?`<img src="${img}" alt="">`:''}<div><h1>${esc(title)}</h1><div class="mt">${esc(sub)}</div>${r!==null?`<div class="rr">★ ${r?r.toFixed(1):'—'}<small>/10${vc?' · '+vc.toLocaleString()+' دەنگ':''}</small></div>`:''}${h?`<button class="btn y" data-sv="${h}">${lbl(h)}</button>`:''}</div></div></div>`}
+function trailer(vs,q){const v=(vs||[]).filter(x=>x.site==='YouTube'),t=v.find(x=>x.type==='Trailer')||v[0];
+return `<h2>🎞️ ترەیلەر</h2><div id="tr">${t?`<button class="btn y" data-yt="${t.key}">▶ لێدانی ترەیلەر</button> `:''}<a class="btn" target="_blank" rel="noopener" href="${t?'https://www.youtube.com/watch?v='+t.key:'https://www.youtube.com/results?search_query='+encodeURIComponent(q)}">YouTube ↗</a></div>`}
+function fail(el,e){el.innerHTML=`<div class="err">${e.message==='key'?'سەرەتا کلیلی TMDB و RAWG دابنێ.':'هەڵەیەک ڕوویدا ('+esc(e.message)+'). کلیلەکان یان ئینتەرنێتەکەت بپشکنە.'}<br><br><button class="btn y" onclick="$('#mK').classList.add('open')">⚙️ کلیلەکان</button></div>`}
+
+/* HOME */
+const H={tab:'m',q:'',page:1,list:[]};
+function home(){
+app.innerHTML=`<div class="hero2"><h1>NEXUS</h1><p>فیلم، زنجیرە و گەیم · ڕەیتینگ و داتای ڕاستەقینە لە TMDB و RAWG</p></div>
+<input id="q" class="search" type="search" placeholder="گەڕان بە ناو…" value="${esc(H.q)}">
+<div class="tabs">${[['m','🎬 فیلم'],['t','📺 زنجیرە'],['g','🎮 گەیم'],['s','★ پاشەکەوتکراو']].map(([k,l])=>`<button class="chip ${H.tab===k?'on':''}" data-tab="${k}">${l}</button>`).join('')}</div>
+<div id="res"></div><p style="text-align:center"><button id="more" class="btn" hidden>زیاتر…</button></p>`;
+let d;$('#q').oninput=e=>{H.q=e.target.value.trim();clearTimeout(d);d=setTimeout(()=>load(1),450)};
+$('#more').onclick=()=>{H.page++;load(0)};
+app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{H.tab=b.dataset.tab;home()});load(1)}
+async function load(reset){const res=$('#res');if(reset){H.page=1;H.list=[];res.innerHTML='<p class="mt">⏳ بارکردن…</p>'}
+try{let a=[],more=false;
+if(H.tab==='s')a=list();
+else if(H.tab==='g'){const d=await rw('/games',H.q?{search:H.q,page_size:24,page:H.page}:{ordering:'-metacritic',page_size:24,page:H.page});a=d.results.map(gm);more=!!d.next}
+else{const k=H.tab==='m'?'movie':'tv',d=await tm(H.q?'/search/'+k:'/'+k+'/top_rated',H.q?{query:H.q,page:H.page}:{page:H.page});a=d.results.map(H.tab==='m'?mv:tv);more=d.page<d.total_pages}
+H.list=H.list.concat(a);res.innerHTML=cards(H.list);$('#more').hidden=!more}catch(e){fail(res,e)}}
+
+/* DETAIL PAGES */
+async function movie(id){const d=await tm('/movie/'+id,{append_to_response:'credits,videos'}),o=mv(d);REG[o.h]=o;
+const dirs=d.credits.crew.filter(c=>c.job==='Director').filter((c,i,a)=>a.findIndex(x=>x.id===c.id)===i);
+app.innerHTML=hero(ti(d.backdrop_path,'w780'),ti(d.poster_path),d.title,[yr(d.release_date),d.runtime?hm(d.runtime):'',d.genres.map(g=>g.name).join(' · ')].filter(Boolean).join(' · '),d.vote_average,d.vote_count,o.h)+
+`${D(d.overview||'—')}`+(dirs.length?'<h2>🎬 دەرهێنەر</h2>'+chips(dirs,'d'):'')+(d.production_companies.length?'<h2>🏢 کۆمپانیا</h2>'+chips(d.production_companies,'pc'):'')+
+trailer(d.videos.results,d.title+' '+yr(d.release_date)+' official trailer')+'<h2>🎭 ئەکتەرەکان</h2>'+people(d.credits.cast.slice(0,14))}
+async function show(id){const d=await tm('/tv/'+id,{append_to_response:'credits,videos'}),o=tv(d);REG[o.h]=o;
+const ss=d.seasons.filter(s=>s.season_number>0);
+app.innerHTML=hero(ti(d.backdrop_path,'w780'),ti(d.poster_path),d.name,[yr(d.first_air_date)+(d.status==='Ended'?'–'+yr(d.last_air_date):'–'),d.genres.map(g=>g.name).join(' · ')].join(' · '),d.vote_average,d.vote_count,o.h)+
+`<div class="stats">${stat('وەرز',d.number_of_seasons)}${stat('ئەپیزۆد',d.number_of_episodes)}${stat('هەر ئەپیزۆد',(d.episode_run_time[0]||'')&&d.episode_run_time[0]+' خولەک')}${stat('دۆخ',d.status)}</div>
+${D(d.overview||'—')}`+(d.created_by.length?'<h2>✍️ دروستکەر</h2>'+chips(d.created_by,'d'):'')+(d.networks.length||d.production_companies.length?'<h2>🏢 کۆمپانیا</h2>'+chips([...d.production_companies],'pc'):'')+
+trailer(d.videos.results,d.name+' official trailer')+`<h2>📺 وەرز و ئەپیزۆدەکان</h2><div class="tabs">${ss.map((s,i)=>`<button class="chip ${i?'':'on'}" data-sn="${s.season_number}">وەرز ${s.season_number} (${s.episode_count})</button>`).join('')}</div><div id="eps"></div><h2>🎭 ئەکتەرەکان</h2>`+people(d.credits.cast.slice(0,14));
+const ld=async n=>{const e=$('#eps');e.innerHTML='<p class="mt">⏳</p>';try{const s=await tm('/tv/'+id+'/season/'+n);
+e.innerHTML=s.episodes.map(x=>`<div class="ep"><div><b><span class="n">E${x.episode_number}</span>${esc(x.name)}</b><p>${esc(x.overview||'')}</p><div class="mt">${esc(x.air_date||'')}${x.runtime?' · '+x.runtime+' خولەک':''}</div></div><div class="rt"><div class="r">${x.vote_average?'★ '+x.vote_average.toFixed(1):'—'}</div>${x.vote_count?x.vote_count+' دەنگ':''}</div></div>`).join('')}catch(er){fail(e,er)}};
+app.querySelectorAll('[data-sn]').forEach(b=>b.onclick=()=>{app.querySelectorAll('[data-sn]').forEach(x=>x.classList.toggle('on',x===b));ld(b.dataset.sn)});
+if(ss[0])ld(ss[0].season_number)}
+async function person(id){const d=await tm('/person/'+id,{append_to_response:'combined_credits'}),cc=d.combined_credits;
+const u=a=>[...new Map(a.filter(x=>x.media_type==='movie'||x.media_type==='tv').map(x=>[x.media_type+x.id,x])).values()].sort((a,b)=>(b.vote_count||0)-(a.vote_count||0));
+const dir=u(cc.crew.filter(x=>x.job==='Director'||x.job==='Creator')),act=u(cc.cast).slice(0,30);
+app.innerHTML=hero('',ti(d.profile_path,'w185'),d.name,[d.known_for_department,d.birthday,d.place_of_birth].filter(Boolean).join(' · '),null,0,'')+
+(d.biography?D(d.biography.slice(0,900)+(d.biography.length>900?'…':''),'margin-top:14px'):'')+
+(dir.length?`<h2>🎬 فیلم و زنجیرەکانی وەک دەرهێنەر/دروستکەر (${dir.length})</h2>`+cards(dir.map(cr)):'')+(act.length?'<h2>🎭 وەک ئەکتەر</h2>'+cards(act.map(cr)):'')}
+async function company(id){const[d,m,t]=await Promise.all([tm('/company/'+id),tm('/discover/movie',{with_companies:id,sort_by:'vote_count.desc'}),tm('/discover/tv',{with_companies:id,sort_by:'vote_count.desc'})]);
+app.innerHTML=hero('',ti(d.logo_path,'w185'),d.name,[d.headquarters,d.origin_country].filter(Boolean).join(' · '),null,0,'')+(m.results.length?'<h2>🎬 فیلمەکان</h2>'+cards(m.results.map(mv)):'')+(t.results.length?'<h2>📺 زنجیرەکان</h2>'+cards(t.results.map(tv)):'')}
+const studio=k=>async id=>{const p=k==='c'?'developers':'publishers',[d,g]=await Promise.all([rw('/'+p+'/'+id),rw('/games',{[p]:id,ordering:'-rating',page_size:40})]);
+app.innerHTML=hero(d.image_background,'',d.name,(k==='c'?'گەشەپێدەر':'بڵاوکەرەوە')+' · '+d.games_count+' گەیم',null,0,'')+(d.description?D(d.description.replace(/<[^>]+>/g,' ').slice(0,700),'margin-top:14px'):'')+'<h2>🎮 گەیمەکانی ئەم کۆمپانیایە</h2>'+cards(g.results.map(gm))};
+async function game(id){const d=await rw('/games/'+id),mo=await rw('/games/'+id+'/movies').catch(()=>({results:[]})),o=gm(d);REG[o.h]=o;const v=mo.results[0];
+app.innerHTML=hero(d.background_image,'',d.name,[yr(d.released),d.genres.map(g=>g.name).join(' · '),d.platforms?d.platforms.slice(0,5).map(p=>p.platform.name).join(' · '):''].filter(Boolean).join(' · '),d.rating?d.rating*2:0,d.ratings_count,o.h)+
+`<div class="stats">${stat('Metacritic',d.metacritic)}${stat('کاتی یاری',d.playtime&&d.playtime+' کاتژمێر')}${stat('ESRB',d.esrb_rating&&d.esrb_rating.name)}${stat('بەرواری دەرچوون',d.released)}</div>
+${D((d.description_raw||'—').slice(0,1200))}`+(d.developers.length?'<h2>🏢 گەشەپێدەر</h2>'+chips(d.developers,'c'):'')+(d.publishers.length?'<h2>📦 بڵاوکەرەوە</h2>'+chips(d.publishers,'u'):'')+
+(v&&v.data?`<h2>🎞️ ترەیلەر</h2><div class="vid"><video controls playsinline poster="${esc(v.preview)}" src="${esc(v.data.max||v.data['480'])}"></video></div>`:trailer([],d.name+' official gameplay trailer'))}
+
+/* ROUTER */
+async function route(){const m=/^#([a-z]+)(\d+)$/.exec(location.hash);scrollTo(0,0);const f={m:movie,t:show,g:game,d:person,pc:company,c:studio('c'),u:studio('u')}[m&&m[1]];
+if(!f)return home();app.innerHTML='<p class="mt">⏳ بارکردن…</p>';try{await f(m[2])}catch(e){fail(app,e)}}
+addEventListener('hashchange',route);
+
+/* GLOBAL EVENTS */
+document.addEventListener('click',e=>{
+const b=e.target.closest('[data-sv]');
+if(b){e.preventDefault();e.stopPropagation();const h=b.dataset.sv,a=list(),i=a.findIndex(o=>o.h===h);
+if(i>-1){a.splice(i,1);toast('لابرا')}else if(REG[h]){a.unshift(REG[h]);toast('پاشەکەوت کرا ★')}
+sv();badges();document.querySelectorAll(`[data-sv="${h}"]`).forEach(x=>{const s=isSv(h);x.classList.toggle('on',s);x.textContent=x.classList.contains('sv')?(s?'★':'☆'):lbl(h)});
+if(H.tab==='s'&&$('#res')){H.list=list();$('#res').innerHTML=cards(H.list)}return}
+const t=e.target.closest('[data-tr]');
+if(t){const dv=t.parentElement.querySelector('.desc'),L='🌐 وەرگێڕان بۆ کوردی';
+if(dv.dataset.o){dv.textContent=dv.dataset.o;delete dv.dataset.o;dv.style.direction='';dv.style.textAlign='';t.textContent=L;return}
+t.textContent='⏳';const o=dv.textContent;
+tr(o).then(k=>{dv.dataset.o=o;dv.textContent=k;dv.style.direction='rtl';dv.style.textAlign='right';t.textContent='↩ دەقی ئینگلیزی'}).catch(()=>{t.textContent=L;toast('وەرگێڕان سەرنەکەوت')});return}
+const y=e.target.closest('[data-yt]');
+if(y)$('#tr').innerHTML=`<div class="vid"><iframe src="https://www.youtube.com/embed/${y.dataset.yt}?autoplay=1" allow="autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen></iframe></div>`;
+const x=e.target.closest('[data-x]');if(x)$('#'+x.dataset.x).classList.remove('open');
+if(e.target.classList.contains('md'))e.target.classList.remove('open')});
+$('#bK').onclick=()=>{$('#kt').value=S.tmdb;$('#kr').value=S.rawg;$('#mK').classList.add('open')};
+$('#kS').onclick=()=>{S.tmdb=$('#kt').value.trim();S.rawg=$('#kr').value.trim();sv();$('#mK').classList.remove('open');toast('کلیلەکان پاشەکەوت کران');route()};
+function profs(){$('#pl').innerHTML=Object.keys(S.saved).map(n=>`<button class="chip ${n===S.prof?'on':''}" data-pf="${esc(n)}">${esc(n)} (${S.saved[n].length})</button>`).join('');
+document.querySelectorAll('[data-pf]').forEach(b=>b.onclick=()=>{S.prof=b.dataset.pf;sv();badges();profs();if(H.tab==='s')route()})}
+$('#bP').onclick=()=>{profs();$('#mP').classList.add('open')};
+$('#pS').onclick=()=>{const n=$('#np').value.trim();if(!n)return;S.saved[n]=S.saved[n]||[];S.prof=n;$('#np').value='';sv();badges();profs()};
+function theme(){document.documentElement.dataset.theme=S.theme}
+$('#bT').onclick=()=>{const dk=S.theme?S.theme==='dark':!matchMedia('(prefers-color-scheme:light)').matches;S.theme=dk?'light':'dark';sv();theme()};
+theme();badges();if(!S.tmdb&&!S.rawg)$('#bK').click();route();
+</script></body></html>
