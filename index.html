@@ -55,8 +55,11 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px s
 <div id="toast"></div>
 <script>
 const $=s=>document.querySelector(s),LS='nexus_v4',app=$('#app');
-let S=JSON.parse(localStorage.getItem(LS)||'null')||{tmdb:'',rawg:'',prof:'میوان',saved:{'میوان':[]},theme:''};
-const sv=()=>localStorage.setItem(LS,JSON.stringify(S));
+let S=null;try{S=JSON.parse(localStorage.getItem(LS)||'null')}catch(e){}
+S=S||{tmdb:'',rawg:'',prof:'میوان',saved:{'میوان':[]},theme:''};
+const DK={tmdb:'f0498e0bb0a442281e77609bfb3839bd',rawg:'9d2b469589cf4f00b03cb57a6c7cc880'};
+if(!S.tmdb)S.tmdb=DK.tmdb;if(!S.rawg)S.rawg=DK.rawg;
+const sv=()=>{try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const yr=d=>(d||'').slice(0,4),hm=m=>Math.floor(m/60)+' کاتژمێر و '+m%60+' خولەک';
 const ti=(p,s='w342')=>p?'https://image.tmdb.org/t/p/'+s+p:'';
@@ -74,9 +77,22 @@ function badges(){$('#pn').textContent=S.prof;$('#pc').textContent=list().length
 function cards(a){return a.length?'<div class="g">'+a.map(o=>{REG[o.h]=o;const s=isSv(o.h);return `<a class="c" href="${o.h}">${o.img?`<img loading="lazy" src="${o.img}" alt="">`:'<div class="ph">🎞️</div>'}<button class="sv ${s?'on':''}" data-sv="${o.h}">${s?'★':'☆'}</button><div class="i"><b>${esc(o.t)}</b><small>${esc(o.s)} · <span class="r">${o.r?'★ '+o.r.toFixed(1):'—'}</span></small></div></a>`}).join('')+'</div>':'<p class="mt">هیچ ئەنجامێک نییە.</p>'}
 const people=a=>a.length?'<div class="row">'+a.map(p=>`<a class="pp" href="#d${p.id}">${p.profile_path?`<img loading="lazy" src="${ti(p.profile_path,'w185')}" alt="">`:'<div class="ph">👤</div>'}<b>${esc(p.name)}</b><small>${esc(p.character||p.job||'')}</small></a>`).join('')+'</div>':'';
 const chips=(a,pre)=>a.length?'<div class="chips">'+a.map(x=>`<a class="chip" href="#${pre}${x.id}">${esc(x.name)}</a>`).join('')+'</div>':'';
-const D=(t,st='')=>`<div class="dw"${st?` style="${st}"`:''}><div class="desc">${esc(t)}</div>${t==='—'?'':'<button class="btn" data-tr style="margin-top:8px">🌐 وەرگێڕان بۆ کوردی</button>'}</div>`;
 async function tr(text){const parts=text.match(/[^.!?]+[.!?]*\s*/g)||[text],ch=[];let c='';for(const p of parts){if((c+p).length>600&&c){ch.push(c);c=''}c+=p}if(c)ch.push(c);
 const out=await Promise.all(ch.map(async q=>{const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ckb&dt=t&q='+encodeURIComponent(q));if(!r.ok)throw new Error('HTTP '+r.status);const j=JSON.parse(await r.text());return j[0].map(x=>x[0]).join('')}));return out.join(' ')}
+const LK='🌐 وەرگێڕان بۆ کوردی';
+const D=(t,st='')=>`<div class="dw"${st?` style="${st}"`:''}><div class="desc"${t==='—'?'':' data-auto'}>${esc(t)}</div>${t==='—'?'':`<button class="btn" data-tr style="margin-top:8px">${LK}</button>`}</div>`;
+let TC={};try{TC=JSON.parse(localStorage.getItem('nexus_tr')||'{}')}catch(e){}
+async function trc(t){if(TC[t])return TC[t];const k=await tr(t);TC[t]=k;try{const ks=Object.keys(TC);if(ks.length>120)ks.slice(0,40).forEach(x=>delete TC[x]);localStorage.setItem('nexus_tr',JSON.stringify(TC))}catch(e){}return k}
+async function toKu(dv,btn){const o=dv.dataset.o||dv.textContent;try{if(btn)btn.textContent='⏳';const k=await trc(o);dv.dataset.o=o;dv.textContent=k;dv.style.direction='rtl';dv.style.textAlign='right';if(btn)btn.textContent='↩ دەقی ئینگلیزی'}catch(e){if(btn)btn.textContent=LK;toast('وەرگێڕان سەرنەکەوت')}}
+function toEn(dv,btn){dv.textContent=dv.dataset.o;delete dv.dataset.o;dv.style.direction='';dv.style.textAlign='';btn.textContent=LK}
+const GK={'Action':'ئەکشن','Adventure':'سەرکێشی','Animation':'ئەنیمەیشن','Comedy':'کۆمیدی','Crime':'تاوان','Documentary':'بەڵگەفیلم','Drama':'دراما','Family':'خێزانی','Fantasy':'فانتازیا','History':'مێژوویی','Horror':'ترسناک','Music':'مۆسیقا','Mystery':'نهێنی','Romance':'ڕۆمانسی','Science Fiction':'خەیاڵی زانستی','TV Movie':'فیلمی تیڤی','Thriller':'تریلەر','War':'جەنگ','Western':'وێسترن','Action & Adventure':'ئەکشن و سەرکێشی','Kids':'منداڵان','News':'هەواڵ','Reality':'ڕیالیتی','Sci-Fi & Fantasy':'خەیاڵی زانستی و فانتازیا','Soap':'سۆپ','Talk':'وتووێژ','War & Politics':'جەنگ و سیاسەت','Indie':'سەربەخۆ','RPG':'ڕۆڵگێڕان','Strategy':'ستراتیژی','Shooter':'تیرئاوێژ','Casual':'ئاسایی','Simulation':'لاساییکردنەوە','Puzzle':'مێشک','Arcade':'ئارکەید','Platformer':'پلاتفۆرم','Racing':'پێشبڕکێ','Massively Multiplayer':'فرە یاریزان','Sports':'وەرزشی','Fighting':'شەڕ','Board Games':'یاری تەختە','Educational':'پەروەردەیی','Card':'کارت'},G=x=>GK[x]||x;
+const SK={'Ended':'کۆتایی هاتووە','Returning Series':'بەردەوامە','Canceled':'هەڵوەشێندراوەتەوە','In Production':'لە بەرهەمهێناندایە','Released':'بڵاوکراوەتەوە'};
+const watch=(k,id)=>'<h2>🍿 بینین</h2><div class="chips"><a class="btn y" target="_blank" rel="noopener" href="https://www.themoviedb.org/'+k+'/'+id+'/watch?locale=IQ">📺 لە کوێ بیبینم؟ (خزمەتگوزاری یاسایی)</a></div>';
+const SN={1:'Steam',2:'Xbox Store',3:'PlayStation Store',4:'App Store',5:'GOG',6:'Nintendo Store',7:'Xbox 360 Store',8:'Google Play',9:'itch.io',11:'Epic Games'};
+const stores=(st,name)=>{const m=new Map();(st.results||[]).forEach(x=>{if(x.url)m.set(x.store_id,x.url)});
+if(!m.has(3))m.set(3,'https://store.playstation.com/en-iq/search/'+encodeURIComponent(name));
+if(!m.has(2))m.set(2,'https://www.xbox.com/en-US/search?q='+encodeURIComponent(name));
+return '<h2>🛒 نرخ و کڕین</h2><div class="chips">'+[...m].map(([i,u])=>`<a class="btn" target="_blank" rel="noopener" href="${esc(u)}">${SN[i]||'Store'} ↗</a>`).join('')+'</div><p class="mt">نرخ لە ماڵپەڕی هەر فرۆشگایەکدا دەبینرێت و بەپێی وڵات دەگۆڕێت.</p>'};
 const stat=(k,v)=>v?`<div class="stat"><small>${k}</small><b>${esc(v)}</b></div>`:'';
 function hero(bg,img,title,sub,r,vc,h){return `<a class="back" href="#">→ گەڕانەوە</a><div class="hero" style="${bg?`background-image:url(${bg})`:''}"><div class="in">${img?`<img src="${img}" alt="">`:''}<div><h1>${esc(title)}</h1><div class="mt">${esc(sub)}</div>${r!==null?`<div class="rr">★ ${r?r.toFixed(1):'—'}<small>/10${vc?' · '+vc.toLocaleString()+' دەنگ':''}</small></div>`:''}${h?`<button class="btn y" data-sv="${h}">${lbl(h)}</button>`:''}</div></div></div>`}
 function trailer(vs,q){const v=(vs||[]).filter(x=>x.site==='YouTube'),t=v.find(x=>x.type==='Trailer')||v[0];
@@ -103,15 +119,15 @@ H.list=H.list.concat(a);res.innerHTML=cards(H.list);$('#more').hidden=!more}catc
 /* DETAIL PAGES */
 async function movie(id){const d=await tm('/movie/'+id,{append_to_response:'credits,videos'}),o=mv(d);REG[o.h]=o;
 const dirs=d.credits.crew.filter(c=>c.job==='Director').filter((c,i,a)=>a.findIndex(x=>x.id===c.id)===i);
-app.innerHTML=hero(ti(d.backdrop_path,'w780'),ti(d.poster_path),d.title,[yr(d.release_date),d.runtime?hm(d.runtime):'',d.genres.map(g=>g.name).join(' · ')].filter(Boolean).join(' · '),d.vote_average,d.vote_count,o.h)+
+app.innerHTML=hero(ti(d.backdrop_path,'w780'),ti(d.poster_path),d.title,[yr(d.release_date),d.runtime?hm(d.runtime):'',d.genres.map(g=>G(g.name)).join(' · ')].filter(Boolean).join(' · '),d.vote_average,d.vote_count,o.h)+
 `${D(d.overview||'—')}`+(dirs.length?'<h2>🎬 دەرهێنەر</h2>'+chips(dirs,'d'):'')+(d.production_companies.length?'<h2>🏢 کۆمپانیا</h2>'+chips(d.production_companies,'pc'):'')+
-trailer(d.videos.results,d.title+' '+yr(d.release_date)+' official trailer')+'<h2>🎭 ئەکتەرەکان</h2>'+people(d.credits.cast.slice(0,14))}
+watch('movie',d.id)+trailer(d.videos.results,d.title+' '+yr(d.release_date)+' official trailer')+'<h2>🎭 ئەکتەرەکان</h2>'+people(d.credits.cast.slice(0,14))}
 async function show(id){const d=await tm('/tv/'+id,{append_to_response:'credits,videos'}),o=tv(d);REG[o.h]=o;
 const ss=d.seasons.filter(s=>s.season_number>0);
-app.innerHTML=hero(ti(d.backdrop_path,'w780'),ti(d.poster_path),d.name,[yr(d.first_air_date)+(d.status==='Ended'?'–'+yr(d.last_air_date):'–'),d.genres.map(g=>g.name).join(' · ')].join(' · '),d.vote_average,d.vote_count,o.h)+
-`<div class="stats">${stat('وەرز',d.number_of_seasons)}${stat('ئەپیزۆد',d.number_of_episodes)}${stat('هەر ئەپیزۆد',(d.episode_run_time[0]||'')&&d.episode_run_time[0]+' خولەک')}${stat('دۆخ',d.status)}</div>
+app.innerHTML=hero(ti(d.backdrop_path,'w780'),ti(d.poster_path),d.name,[yr(d.first_air_date)+(d.status==='Ended'?'–'+yr(d.last_air_date):'–'),d.genres.map(g=>G(g.name)).join(' · ')].join(' · '),d.vote_average,d.vote_count,o.h)+
+`<div class="stats">${stat('وەرز',d.number_of_seasons)}${stat('ئەپیزۆد',d.number_of_episodes)}${stat('هەر ئەپیزۆد',(d.episode_run_time[0]||'')&&d.episode_run_time[0]+' خولەک')}${stat('دۆخ',SK[d.status]||d.status)}</div>
 ${D(d.overview||'—')}`+(d.created_by.length?'<h2>✍️ دروستکەر</h2>'+chips(d.created_by,'d'):'')+(d.networks.length||d.production_companies.length?'<h2>🏢 کۆمپانیا</h2>'+chips([...d.production_companies],'pc'):'')+
-trailer(d.videos.results,d.name+' official trailer')+`<h2>📺 وەرز و ئەپیزۆدەکان</h2><div class="tabs">${ss.map((s,i)=>`<button class="chip ${i?'':'on'}" data-sn="${s.season_number}">وەرز ${s.season_number} (${s.episode_count})</button>`).join('')}</div><div id="eps"></div><h2>🎭 ئەکتەرەکان</h2>`+people(d.credits.cast.slice(0,14));
+watch('tv',d.id)+trailer(d.videos.results,d.name+' official trailer')+`<h2>📺 وەرز و ئەپیزۆدەکان</h2><div class="tabs">${ss.map((s,i)=>`<button class="chip ${i?'':'on'}" data-sn="${s.season_number}">وەرز ${s.season_number} (${s.episode_count})</button>`).join('')}</div><div id="eps"></div><h2>🎭 ئەکتەرەکان</h2>`+people(d.credits.cast.slice(0,14));
 const ld=async n=>{const e=$('#eps');e.innerHTML='<p class="mt">⏳</p>';try{const s=await tm('/tv/'+id+'/season/'+n);
 e.innerHTML=s.episodes.map(x=>`<div class="ep"><div><b><span class="n">E${x.episode_number}</span>${esc(x.name)}</b><p>${esc(x.overview||'')}</p><div class="mt">${esc(x.air_date||'')}${x.runtime?' · '+x.runtime+' خولەک':''}</div></div><div class="rt"><div class="r">${x.vote_average?'★ '+x.vote_average.toFixed(1):'—'}</div>${x.vote_count?x.vote_count+' دەنگ':''}</div></div>`).join('')}catch(er){fail(e,er)}};
 app.querySelectorAll('[data-sn]').forEach(b=>b.onclick=()=>{app.querySelectorAll('[data-sn]').forEach(x=>x.classList.toggle('on',x===b));ld(b.dataset.sn)});
@@ -126,11 +142,11 @@ async function company(id){const[d,m,t]=await Promise.all([tm('/company/'+id),tm
 app.innerHTML=hero('',ti(d.logo_path,'w185'),d.name,[d.headquarters,d.origin_country].filter(Boolean).join(' · '),null,0,'')+(m.results.length?'<h2>🎬 فیلمەکان</h2>'+cards(m.results.map(mv)):'')+(t.results.length?'<h2>📺 زنجیرەکان</h2>'+cards(t.results.map(tv)):'')}
 const studio=k=>async id=>{const p=k==='c'?'developers':'publishers',[d,g]=await Promise.all([rw('/'+p+'/'+id),rw('/games',{[p]:id,ordering:'-rating',page_size:40})]);
 app.innerHTML=hero(d.image_background,'',d.name,(k==='c'?'گەشەپێدەر':'بڵاوکەرەوە')+' · '+d.games_count+' گەیم',null,0,'')+(d.description?D(d.description.replace(/<[^>]+>/g,' ').slice(0,700),'margin-top:14px'):'')+'<h2>🎮 گەیمەکانی ئەم کۆمپانیایە</h2>'+cards(g.results.map(gm))};
-async function game(id){const d=await rw('/games/'+id),mo=await rw('/games/'+id+'/movies').catch(()=>({results:[]})),o=gm(d);REG[o.h]=o;const v=mo.results[0];
-app.innerHTML=hero(d.background_image,'',d.name,[yr(d.released),d.genres.map(g=>g.name).join(' · '),d.platforms?d.platforms.slice(0,5).map(p=>p.platform.name).join(' · '):''].filter(Boolean).join(' · '),d.rating?d.rating*2:0,d.ratings_count,o.h)+
+async function game(id){const d=await rw('/games/'+id),mo=await rw('/games/'+id+'/movies').catch(()=>({results:[]})),st=await rw('/games/'+id+'/stores').catch(()=>({results:[]})),o=gm(d);REG[o.h]=o;const v=mo.results[0];
+app.innerHTML=hero(d.background_image,'',d.name,[yr(d.released),d.genres.map(g=>G(g.name)).join(' · '),d.platforms?d.platforms.slice(0,5).map(p=>p.platform.name).join(' · '):''].filter(Boolean).join(' · '),d.rating?d.rating*2:0,d.ratings_count,o.h)+
 `<div class="stats">${stat('Metacritic',d.metacritic)}${stat('کاتی یاری',d.playtime&&d.playtime+' کاتژمێر')}${stat('ESRB',d.esrb_rating&&d.esrb_rating.name)}${stat('بەرواری دەرچوون',d.released)}</div>
 ${D((d.description_raw||'—').slice(0,1200))}`+(d.developers.length?'<h2>🏢 گەشەپێدەر</h2>'+chips(d.developers,'c'):'')+(d.publishers.length?'<h2>📦 بڵاوکەرەوە</h2>'+chips(d.publishers,'u'):'')+
-(v&&v.data?`<h2>🎞️ ترەیلەر</h2><div class="vid"><video controls playsinline poster="${esc(v.preview)}" src="${esc(v.data.max||v.data['480'])}"></video></div>`:trailer([],d.name+' official gameplay trailer'))}
+stores(st,d.name)+(v&&v.data?`<h2>🎞️ ترەیلەر</h2><div class="vid"><video controls playsinline poster="${esc(v.preview)}" src="${esc(v.data.max||v.data['480'])}"></video></div>`:trailer([],d.name+' official gameplay trailer'))}
 
 /* ROUTER */
 async function route(){const m=/^#([a-z]+)(\d+)$/.exec(location.hash);scrollTo(0,0);const f={m:movie,t:show,g:game,d:person,pc:company,c:studio('c'),u:studio('u')}[m&&m[1]];
@@ -145,10 +161,7 @@ if(i>-1){a.splice(i,1);toast('لابرا')}else if(REG[h]){a.unshift(REG[h]);toa
 sv();badges();document.querySelectorAll(`[data-sv="${h}"]`).forEach(x=>{const s=isSv(h);x.classList.toggle('on',s);x.textContent=x.classList.contains('sv')?(s?'★':'☆'):lbl(h)});
 if(H.tab==='s'&&$('#res')){H.list=list();$('#res').innerHTML=cards(H.list)}return}
 const t=e.target.closest('[data-tr]');
-if(t){const dv=t.parentElement.querySelector('.desc'),L='🌐 وەرگێڕان بۆ کوردی';
-if(dv.dataset.o){dv.textContent=dv.dataset.o;delete dv.dataset.o;dv.style.direction='';dv.style.textAlign='';t.textContent=L;return}
-t.textContent='⏳';const o=dv.textContent;
-tr(o).then(k=>{dv.dataset.o=o;dv.textContent=k;dv.style.direction='rtl';dv.style.textAlign='right';t.textContent='↩ دەقی ئینگلیزی'}).catch(()=>{t.textContent=L;toast('وەرگێڕان سەرنەکەوت')});return}
+if(t){const dv=t.parentElement.querySelector('.desc');if(dv.dataset.o)toEn(dv,t);else toKu(dv,t);return}
 const y=e.target.closest('[data-yt]');
 if(y)$('#tr').innerHTML=`<div class="vid"><iframe src="https://www.youtube.com/embed/${y.dataset.yt}?autoplay=1" allow="autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen></iframe></div>`;
 const x=e.target.closest('[data-x]');if(x)$('#'+x.dataset.x).classList.remove('open');
@@ -161,5 +174,6 @@ $('#bP').onclick=()=>{profs();$('#mP').classList.add('open')};
 $('#pS').onclick=()=>{const n=$('#np').value.trim();if(!n)return;S.saved[n]=S.saved[n]||[];S.prof=n;$('#np').value='';sv();badges();profs()};
 function theme(){document.documentElement.dataset.theme=S.theme}
 $('#bT').onclick=()=>{const dk=S.theme?S.theme==='dark':!matchMedia('(prefers-color-scheme:light)').matches;S.theme=dk?'light':'dark';sv();theme()};
+new MutationObserver(()=>{document.querySelectorAll('.desc[data-auto]').forEach(d=>{d.removeAttribute('data-auto');if(d.textContent.trim()&&d.textContent!=='—')toKu(d,d.parentElement.querySelector('[data-tr]'))})}).observe(app,{childList:true,subtree:true});
 theme();badges();if(!S.tmdb&&!S.rawg)$('#bK').click();route();
 </script></body></html>
