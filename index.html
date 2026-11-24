@@ -44,7 +44,7 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px s
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--p);border:1px solid var(--y);padding:9px 16px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:80}#toast.on{opacity:1}
 </style></head><body>
 <header><div class="w nav"><a class="logo" href="#">NEXUS</a><div>
-<button class="btn" id="bK">⚙️ کلیلەکان</button> <button class="btn" id="bP">👤 <span id="pn"></span> (<span id="pc"></span>)</button> <button class="btn" id="bT">🌓</button></div></div></header>
+<button class="btn" id="bK" style="display:none">⚙️ کلیلەکان</button> <button class="btn" id="bP">👤 <span id="pn"></span> (<span id="pc"></span>)</button> <button class="btn" id="bT">🌓</button></div></div></header>
 <main class="w" id="app"></main>
 <div class="md" id="mK"><div class="mc"><h3>⚙️ کلیلەکانی API</h3>
 <label>TMDB API Key (v3) — فیلم و زنجیرە</label><input id="kt" placeholder="TMDB key">
@@ -57,15 +57,14 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px s
 const $=s=>document.querySelector(s),LS='nexus_v4',app=$('#app');
 let S=null;try{S=JSON.parse(localStorage.getItem(LS)||'null')}catch(e){}
 S=S||{tmdb:'',rawg:'',prof:'میوان',saved:{'میوان':[]},theme:''};
-const DK={tmdb:'f0498e0bb0a442281e77609bfb3839bd',rawg:'9d2b469589cf4f00b03cb57a6c7cc880'};
-if(!S.tmdb)S.tmdb=DK.tmdb;if(!S.rawg)S.rawg=DK.rawg;
+delete S.tmdb;delete S.rawg;
 const sv=()=>{try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const yr=d=>(d||'').slice(0,4),hm=m=>Math.floor(m/60)+' کاتژمێر و '+m%60+' خولەک';
 const ti=(p,s='w342')=>p?'https://image.tmdb.org/t/p/'+s+p:'';
-async function api(base,key,kn,p,q={}){if(!key)throw new Error('key');const u=new URL(base+p);u.searchParams.set(kn,key);for(const k in q)u.searchParams.set(k,q[k]);const r=await fetch(u.toString());if(!r.ok)throw new Error('HTTP '+r.status);return JSON.parse(await r.text())}
-const tm=(p,q={})=>api('https://api.themoviedb.org/3',S.tmdb,'api_key',p,{language:'en-US',...q});
-const rw=(p,q={})=>api('https://api.rawg.io/api',S.rawg,'key',p,q);
+async function api(src,p,q={}){const r=await fetch('/api/p?'+new URLSearchParams({s:src,path:p,...q}).toString());if(!r.ok)throw new Error('HTTP '+r.status);return JSON.parse(await r.text())}
+const tm=(p,q={})=>api('tmdb',p,{language:'en-US',...q});
+const rw=(p,q={})=>api('rawg',p,q);
 const REG={},mv=o=>({h:'#m'+o.id,img:ti(o.poster_path),t:o.title,s:'🎬 '+yr(o.release_date),r:o.vote_average}),
 tv=o=>({h:'#t'+o.id,img:ti(o.poster_path),t:o.name,s:'📺 '+yr(o.first_air_date),r:o.vote_average}),
 gm=o=>({h:'#g'+o.id,img:o.background_image,t:o.name,s:'🎮 '+yr(o.released),r:o.rating?o.rating*2:0}),
@@ -97,7 +96,7 @@ const stat=(k,v)=>v?`<div class="stat"><small>${k}</small><b>${esc(v)}</b></div>
 function hero(bg,img,title,sub,r,vc,h){return `<a class="back" href="#">→ گەڕانەوە</a><div class="hero" style="${bg?`background-image:url(${bg})`:''}"><div class="in">${img?`<img src="${img}" alt="">`:''}<div><h1>${esc(title)}</h1><div class="mt">${esc(sub)}</div>${r!==null?`<div class="rr">★ ${r?r.toFixed(1):'—'}<small>/10${vc?' · '+vc.toLocaleString()+' دەنگ':''}</small></div>`:''}${h?`<button class="btn y" data-sv="${h}">${lbl(h)}</button>`:''}</div></div></div>`}
 function trailer(vs,q){const v=(vs||[]).filter(x=>x.site==='YouTube'),t=v.find(x=>x.type==='Trailer')||v[0];
 return `<h2>🎞️ ترەیلەر</h2><div id="tr">${t?`<button class="btn y" data-yt="${t.key}">▶ لێدانی ترەیلەر</button> `:''}<a class="btn" target="_blank" rel="noopener" href="${t?'https://www.youtube.com/watch?v='+t.key:'https://www.youtube.com/results?search_query='+encodeURIComponent(q)}">YouTube ↗</a></div>`}
-function fail(el,e){el.innerHTML=`<div class="err">${e.message==='key'?'سەرەتا کلیلی TMDB و RAWG دابنێ.':'هەڵەیەک ڕوویدا ('+esc(e.message)+'). کلیلەکان یان ئینتەرنێتەکەت بپشکنە.'}<br><br><button class="btn y" onclick="$('#mK').classList.add('open')">⚙️ کلیلەکان</button></div>`}
+function fail(el,e){el.innerHTML=`<div class="err">${'هەڵەیەک ڕوویدا ('+esc(e.message)+'). ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵ بدەوە.'}<br><br><button class="btn y" onclick="location.reload()">⟳ دووبارە</button></div>`}
 
 /* HOME */
 const H={tab:'m',q:'',page:1,list:[]};
@@ -162,6 +161,8 @@ sv();badges();document.querySelectorAll(`[data-sv="${h}"]`).forEach(x=>{const s=
 if(H.tab==='s'&&$('#res')){H.list=list();$('#res').innerHTML=cards(H.list)}return}
 const t=e.target.closest('[data-tr]');
 if(t){const dv=t.parentElement.querySelector('.desc');if(dv.dataset.o)toEn(dv,t);else toKu(dv,t);return}
+const al=e.target.closest('a[href^="#"]');
+if(al){e.preventDefault();location.hash=al.getAttribute('href');return}
 const y=e.target.closest('[data-yt]');
 if(y)$('#tr').innerHTML=`<div class="vid"><iframe src="https://www.youtube.com/embed/${y.dataset.yt}?autoplay=1" allow="autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen></iframe></div>`;
 const x=e.target.closest('[data-x]');if(x)$('#'+x.dataset.x).classList.remove('open');
@@ -175,5 +176,5 @@ $('#pS').onclick=()=>{const n=$('#np').value.trim();if(!n)return;S.saved[n]=S.sa
 function theme(){document.documentElement.dataset.theme=S.theme}
 $('#bT').onclick=()=>{const dk=S.theme?S.theme==='dark':!matchMedia('(prefers-color-scheme:light)').matches;S.theme=dk?'light':'dark';sv();theme()};
 new MutationObserver(()=>{document.querySelectorAll('.desc[data-auto]').forEach(d=>{d.removeAttribute('data-auto');if(d.textContent.trim()&&d.textContent!=='—')toKu(d,d.parentElement.querySelector('[data-tr]'))})}).observe(app,{childList:true,subtree:true});
-theme();badges();if(!S.tmdb&&!S.rawg)$('#bK').click();route();
+theme();badges();route();
 </script></body></html>
