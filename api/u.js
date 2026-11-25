@@ -26,6 +26,8 @@ function init() {
       await q(`CREATE TABLE IF NOT EXISTS nx_users(
         name TEXT PRIMARY KEY, salt TEXT NOT NULL, hash TEXT NOT NULL,
         token TEXT, data JSONB NOT NULL DEFAULT '{}'::jsonb)`);
+      await q('ALTER TABLE nx_users ADD COLUMN IF NOT EXISTS fails INT NOT NULL DEFAULT 0');
+      await q('ALTER TABLE nx_users ADD COLUMN IF NOT EXISTS locked TIMESTAMPTZ');
       await q(`CREATE TABLE IF NOT EXISTS nx_ratings(
         k TEXT NOT NULL, name TEXT NOT NULL, score INT NOT NULL, PRIMARY KEY(k,name))`);
       await q('ALTER TABLE nx_ratings ADD COLUMN IF NOT EXISTS meta JSONB');
@@ -39,11 +41,34 @@ function init() {
 }
 
 const hashPin = (pin, salt) => crypto.pbkdf2Sync(pin, salt, 100000, 32, 'sha256').toString('hex');
+// A PIN is weak when it is all one digit (111111) or a straight run (123456, 654321)
+function weak(p) {
+  if (!/^\d{6}$/.test(p) || /^(\d)\1+$/.test(p)) return true;
+  const d = [...p].map(Number);
+  let up = true, dn = true;
+  for (let i = 1; i < d.length; i++) {
+    if (d[i] !== d[i - 1] + 1) up = false;
+    if (d[i] !== d[i - 1] - 1) dn = false;
+  }
+  return up || dn;
+}
+async function isLocked(name) {
+  const r = await q('SELECT locked FROM nx_users WHERE name=$1', [name]);
+  return !!(r[0] && r[0].locked && new Date(r[0].locked) > new Date());
+}
+async function failed(name) {
+  await q(`UPDATE nx_users SET fails = fails + 1,
+           locked = CASE WHEN fails + 1 >= 5 THEN now() + interval '15 minutes' ELSE locked END
+           WHERE name=$1`, [name]);
+}
+async function passed(name) {
+  await q('UPDATE nx_users SET fails=0, locked=NULL WHERE name=$1', [name]);
+}
 
 async function auth(req) {
   const m = /^Bearer ([0-9a-f]{64})$/.exec(req.headers.authorization || '');
   if (!m) return null;
-  const rows = await q('SELECT name, data FROM nx_users WHERE token=$1', [m[1]]);
+  const rows = await q('SELECT name, data, salt, hash FROM nx_users WHERE token=$1', [m[1]]);
   return rows[0] || null;
 }
 
@@ -97,10 +122,16 @@ module.exports = async (req, res) => {
       const rows = await q('SELECT name, salt, hash, data FROM nx_users WHERE name=$1', [name]);
       if (rows.length) {
         const u = rows[0];
-        if (hashPin(pin, u.salt) !== u.hash) return res.status(401).json({ error: 'wrong pin' });
+        if (await isLocked(name)) return res.status(429).json({ error: 'too many tries' });
+        if (hashPin(pin, u.salt) !== u.hash) {
+          await failed(name);
+          return res.status(401).json({ error: 'wrong pin' });
+        }
+        await passed(name);
         await q('UPDATE nx_users SET token=$1 WHERE name=$2', [token, name]);
         return res.status(200).json({ token, data: u.data || {} });
       }
+      if (weak(pin)) return res.status(400).json({ error: 'weak pin' });
       const salt = crypto.randomBytes(16).toString('hex');
       await q('INSERT INTO nx_users(name, salt, hash, token, data) VALUES($1,$2,$3,$4,$5::jsonb)',
               [name, salt, hashPin(pin, salt), token, '{}']);
@@ -159,6 +190,40 @@ module.exports = async (req, res) => {
         await q(`INSERT INTO nx_ratings(k, name, score, meta) VALUES ${ph}`, vals);
       }
       return res.status(200).json({ ok: true });
+    }
+
+    if (req.method === 'POST' && a === 'profile') {
+      const b = req.body || {};
+      const oldPin = String(b.oldPin || '');
+      const newPin = String(b.newPin || '');
+      const newName = String(b.newName || '').trim();
+      if (!/^\d{4,6}$/.test(oldPin)) return res.status(400).json({ error: 'bad input' });
+      if (await isLocked(me.name)) return res.status(429).json({ error: 'too many tries' });
+      if (hashPin(oldPin, me.salt) !== me.hash) {
+        await failed(me.name);
+        return res.status(401).json({ error: 'wrong pin' });
+      }
+      await passed(me.name);
+      let salt = me.salt, hash = me.hash;
+      if (newPin) {
+        if (weak(newPin)) return res.status(400).json({ error: 'weak pin' });
+        salt = crypto.randomBytes(16).toString('hex');
+        hash = hashPin(newPin, salt);
+      }
+      let finalName = me.name;
+      if (newName && newName !== me.name) {
+        if (!NAME.test(newName)) return res.status(400).json({ error: 'bad name' });
+        const taken = await q('SELECT 1 FROM nx_users WHERE name=$1', [newName]);
+        if (taken.length) return res.status(409).json({ error: 'name taken' });
+        finalName = newName;
+      }
+      await q('UPDATE nx_users SET name=$1, salt=$2, hash=$3 WHERE name=$4', [finalName, salt, hash, me.name]);
+      if (finalName !== me.name) {
+        await q('UPDATE nx_ratings SET name=$1 WHERE name=$2', [finalName, me.name]);
+        await q('UPDATE nx_comments SET name=$1 WHERE name=$2', [finalName, me.name]);
+        await q('UPDATE nx_comments SET reporters = array_replace(reporters, $2, $1) WHERE $2 = ANY(reporters)', [finalName, me.name]);
+      }
+      return res.status(200).json({ ok: true, name: finalName });
     }
 
     if (req.method === 'POST' && a === 'comment') {
