@@ -130,7 +130,15 @@ async function enter(){const n=($('#lname')?.value||'').trim(),pin=($('#lpin')?.
 if(!n||!/^\d{4,6}$/.test(pin)){toast('ناو و PIN ی ٤ تا ٦ ژمارە بنووسە');return}
 try{const j=await nx('enter',{name:n,pin});localStorage.setItem('nexus_auth',JSON.stringify({token:j.token,name:n}));
 const d=j.data||{},g=S.prof==='میوان'?(S.p['میوان']||{}):{},base=Object.keys(d).length?d:g;S.prof=n;S.p[n]={seen:{},rate:{},lists:{},...base};S.p[n].joined=S.p[n].joined||Date.now();sv();badges();sync();toast('بەخێربێیت، '+n);home()}
-catch(e){toast(e.message==='wrong pin'?'PIN هەڵەیە':'هەڵە: '+e.message)}}
+catch(e){toast(errMsg(e.message))}}
+function errMsg(m){return ({'wrong pin':'PIN هەڵەیە','weak pin':'PINی ٦ ژمارە بنووسە، ئاسان نەبێت (وەک 123456 یان 111111)','too many tries':'زۆر هەوڵی هەڵە. دوای ١٥ خولەک هەوڵ بدەرەوە','name taken':'ئەم ناوە پێشتر بەکارهاتووە','bad name':'ناو دەبێت ٢ تا ٣٠ پیت بێت','bad input':'زانیاری هەڵەیە'})[m]||('هەڵە: '+m)}
+async function psave(){const au=AU();if(!au)return;const nn=($('#pnn').value||'').trim(),op=($('#pop').value||'').trim(),np=($('#pnp').value||'').trim();
+if(!/^\d{4,6}$/.test(op)){toast('PINی ئێستات بنووسە');return}
+if(np&&!/^\d{6}$/.test(np)){toast('PINی نوێ دەبێت ٦ ژمارە بێت');return}
+try{const j=await nx('profile',{oldPin:op,newPin:np||undefined,newName:(nn&&nn!==au.name)?nn:undefined});
+const name=j.name||au.name;if(name!==au.name){S.p[name]=S.p[au.name]||{seen:{},rate:{},lists:{}};delete S.p[au.name];S.prof=name}
+localStorage.setItem('nexus_auth',JSON.stringify({token:au.token,name}));sv();toast('پرۆفایل نوێکرایەوە ✅');H.tab='p';home()}
+catch(e){toast(errMsg(e.message))}}
 async function aggFill(){const els=[...document.querySelectorAll('a.c[data-k]')];if(!els.length)return;const ks=[...new Set(els.map(e=>e.dataset.k))].slice(0,60);
 try{const j=await nx('agg&keys='+encodeURIComponent(ks.join(',')));els.forEach(e=>{const a=j.agg[e.dataset.k],m=e.querySelector('.cm');if(m&&a)m.innerHTML=`👥 ★ ${a.avg} <small>(${a.n})</small>`})}catch(e){}}
 async function cm1(h){try{const j=await nx('agg&keys='+encodeURIComponent(h));const a=j.agg[h],rr=app.querySelector('.rr');if(a&&rr)rr.insertAdjacentHTML('beforeend',`<small> · 👥 ★${a.avg} (${a.n})</small>`)}catch(e){}}
@@ -150,7 +158,7 @@ async function renderComments(k){const box=$('#cm-box');if(!box)return;const au=
 let list=[];try{list=(await nx('comments&k='+encodeURIComponent(k))).comments}catch(e){}
 const form=au?`<textarea id="ctx" rows="3" maxlength="500" class="search" style="margin:8px 0;font-size:15px" placeholder="ڕای خۆت بنووسە…"></textarea><button class="btn y" data-csend="${esc(k)}">ناردن</button>`:'<p class="mt">بۆ نووسینی کۆمێنت، سەرەتا لە پرۆفایل بچۆ ژوورەوە.</p>';
 box.innerHTML=`<h2>💬 کۆمێنتەکان (${list.length})</h2>${form}`+(list.length?list.map(c=>`<div class="cmt"><div class="cmh"><b>${esc(c.name)}</b><small>${esc(new Date(c.created).toLocaleDateString('ar'))}</small></div><p>${esc(c.text)}</p>${au&&au.name!==c.name?`<button class="btn" data-rep="${c.id}" data-k="${esc(k)}">🚩 ڕاپۆرت</button>`:''}</div>`).join(''):'<p class="mt">هێشتا کۆمێنتێک نییە.</p>')}
-function loginBox(){return `<div class="my"><h2>👤 چوونەژوورەوە</h2><p class="mt">ناو و PIN ی ٤ تا ٦ ژمارە. ئەگەر ناوەکە نوێ بێت، هەژمارێکی نوێ دروست دەبێت.</p>
+function loginBox(){return `<div class="my"><h2>👤 چوونەژوورەوە</h2><p class="mt">ناو و PIN. بۆ هەژمارێکی نوێ PINی ٦ ژمارەی ئاسان نەبوو بنووسە.</p>
 <label class="mt">ناو</label><input id="lname" class="search" style="margin:6px 0" placeholder="ناوی تۆ" maxlength="30">
 <label class="mt">PIN</label><input id="lpin" class="search" style="margin:6px 0" inputmode="numeric" type="password" placeholder="••••" maxlength="6">
 <p><button class="btn y" data-enter>چوونەژوورەوە / دروستکردن</button></p></div>`}
@@ -163,6 +171,11 @@ return `<div class="pfh"><div class="avw"><img class="av" alt="" src="${p.avatar
 ${sv_.length?'<h2>👁 بینراوەکان</h2>'+cards(sv_.map(x=>x.o)):'<p class="mt">هێشتا هیچ فیلم یان زنجیرە یان گەیمێکت وەک بینراو دیاری نەکردووە.</p>'}
 ${rs.length?'<h2>★ ڕەیتینگەکانم</h2>'+cards(rs.sort((a,b)=>b.n-a.n).map(x=>({...x.o,r:x.n,s:x.o.s+' · ڕەیتینگی من'}))):''}
 ${ln.map(n=>`<div class="lh"><h2>📋 ${esc(n)} (${p.lists[n].length})</h2><button class="btn" data-dl="${esc(n)}">🗑</button></div>${cards(p.lists[n])}`).join('')}
+<p><button class="btn" data-pedit>✏️ دەستکاریکردنی پرۆفایل</button></p>
+<div id="pedit" class="my" hidden><label class="mt">ناوی نوێ (بەتاڵ بێت ناو ناگۆڕدرێت)</label><input id="pnn" class="search" style="margin:6px 0" maxlength="30" placeholder="ناوی نوێ">
+<label class="mt">PINی ئێستا (بۆ پشتڕاستکردنەوە)</label><input id="pop" class="search" style="margin:6px 0" inputmode="numeric" type="password" maxlength="6" placeholder="••••">
+<label class="mt">PINی نوێ (بەتاڵ بێت PIN ناگۆڕدرێت، ٦ ژمارە)</label><input id="pnp" class="search" style="margin:6px 0" inputmode="numeric" type="password" maxlength="6" placeholder="••••••">
+<p><button class="btn y" data-psave>پاشەکەوتکردن</button></p></div>
 <p><button class="btn y" data-newl>➕ لیستی نوێ</button> <button class="btn" data-logout>چوونەدەرەوە</button></p>`}
 let LM=null;
 function lmodal(){const p=P(),h=LM;$('#lb').innerHTML=(h&&REG[h]?`<p class="mt">${esc(REG[h].t)}</p>`:'')+Object.keys(p.lists).map(n=>`<button class="chip ${h&&p.lists[n].some(x=>x.h===h)?'on':''}" data-lt="${esc(n)}">${esc(n)} (${p.lists[n].length})</button>`).join('')+'<br>'}
@@ -246,6 +259,8 @@ if(e.target.closest('[data-newl]')){LM=null;lmodal();$('#mL').classList.add('ope
 const dl=e.target.closest('[data-dl]');
 if(dl){if(confirm('ئەم لیستە بسڕدرێتەوە؟')){delete P().lists[dl.dataset.dl];sv();if(H.tab==='p')$('#res').innerHTML=profile()}return}
 if(e.target.closest('[data-enter]')){enter();return}
+if(e.target.closest('[data-pedit]')){const b=$('#pedit');if(b)b.hidden=!b.hidden;return}
+if(e.target.closest('[data-psave]')){psave();return}
 if(e.target.closest('[data-logout]')){localStorage.removeItem('nexus_auth');S.prof='میوان';sv();badges();home();toast('چوویتەدەرەوە');return}
 if(e.target.closest('[data-avatar]')){const f=$('#avf');if(f)f.click();return}
 const cs=e.target.closest('[data-csend]');if(cs){const tx=$('#ctx');const text=(tx?.value||'').trim();if(!text){toast('کۆمێنتەکەت بنووسە');return}
