@@ -167,15 +167,15 @@ const p=P(),sv_=Object.values(p.seen),rs=Object.values(p.rate),ln=Object.keys(p.
 const joined=p.joined?new Date(p.joined).toLocaleDateString('ar',{month:'long',year:'numeric'}):'';
 return `<div class="pfh"><div class="avw"><img class="av" alt="" src="${p.avatar||''}" style="${p.avatar?'':'display:none'}"><div class="av ph2" style="${p.avatar?'display:none':''}">${esc(au.name.charAt(0))}</div><button class="avb" data-avatar title="گۆڕینی وێنە">📷</button><input id="avf" type="file" accept="image/*" hidden></div>
 <div><h2 class="pn">${esc(au.name)}</h2><div class="mt">بەشداری لە ${esc(joined)}</div></div></div>
-<div class="pst"><div class="stat"><small>★ ڕەیتینگ</small><b>${rs.length}</b></div><div class="stat"><small>👁 بینراو</small><b>${sv_.length}</b></div><div class="stat"><small>📋 لیستەکان</small><b>${ln.length}</b></div><div class="stat"><small>تێکڕای ڕەیتینگ</small><b>${avg}</b></div></div>
-${sv_.length?'<h2>👁 بینراوەکان</h2>'+cards(sv_.map(x=>x.o)):'<p class="mt">هێشتا هیچ فیلم یان زنجیرە یان گەیمێکت وەک بینراو دیاری نەکردووە.</p>'}
-${rs.length?'<h2>★ ڕەیتینگەکانم</h2>'+cards(rs.sort((a,b)=>b.n-a.n).map(x=>({...x.o,r:x.n,s:x.o.s+' · ڕەیتینگی من'}))):''}
-${ln.map(n=>`<div class="lh"><h2>📋 ${esc(n)} (${p.lists[n].length})</h2><button class="btn" data-dl="${esc(n)}">🗑</button></div>${cards(p.lists[n])}`).join('')}
 <p><button class="btn" data-pedit>✏️ دەستکاریکردنی پرۆفایل</button></p>
 <div id="pedit" class="my" hidden><label class="mt">ناوی نوێ (بەتاڵ بێت ناو ناگۆڕدرێت)</label><input id="pnn" class="search" style="margin:6px 0" maxlength="30" placeholder="ناوی نوێ">
 <label class="mt">PINی ئێستا (بۆ پشتڕاستکردنەوە)</label><input id="pop" class="search" style="margin:6px 0" inputmode="numeric" type="password" maxlength="6" placeholder="••••">
 <label class="mt">PINی نوێ (بەتاڵ بێت PIN ناگۆڕدرێت، ٦ ژمارە)</label><input id="pnp" class="search" style="margin:6px 0" inputmode="numeric" type="password" maxlength="6" placeholder="••••••">
 <p><button class="btn y" data-psave>پاشەکەوتکردن</button></p></div>
+<div class="pst"><div class="stat"><small>★ ڕەیتینگ</small><b>${rs.length}</b></div><div class="stat"><small>👁 بینراو</small><b>${sv_.length}</b></div><div class="stat"><small>📋 لیستەکان</small><b>${ln.length}</b></div><div class="stat"><small>تێکڕای ڕەیتینگ</small><b>${avg}</b></div></div>
+${sv_.length?'<h2>👁 بینراوەکان</h2>'+cards(sv_.map(x=>x.o)):'<p class="mt">هێشتا هیچ فیلم یان زنجیرە یان گەیمێکت وەک بینراو دیاری نەکردووە.</p>'}
+${rs.length?'<h2>★ ڕەیتینگەکانم</h2>'+cards(rs.sort((a,b)=>b.n-a.n).map(x=>({...x.o,r:x.n,s:x.o.s+' · ڕەیتینگی من'}))):''}
+${ln.map(n=>`<div class="lh"><h2>📋 ${esc(n)} (${p.lists[n].length})</h2><button class="btn" data-dl="${esc(n)}">🗑</button></div>${cards(p.lists[n])}`).join('')}
 <p><button class="btn y" data-newl>➕ لیستی نوێ</button> <button class="btn" data-logout>چوونەدەرەوە</button></p>`}
 let LM=null;
 function lmodal(){const p=P(),h=LM;$('#lb').innerHTML=(h&&REG[h]?`<p class="mt">${esc(REG[h].t)}</p>`:'')+Object.keys(p.lists).map(n=>`<button class="chip ${h&&p.lists[n].some(x=>x.h===h)?'on':''}" data-lt="${esc(n)}">${esc(n)} (${p.lists[n].length})</button>`).join('')+'<br>'}
